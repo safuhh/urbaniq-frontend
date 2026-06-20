@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import api from '@/lib/api';
 
 export type UserRole = 'Admin' | 'Owner' | 'Agent' | 'Buyer';
 
@@ -36,12 +37,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ user, isAuthenticated: true, isLoading: false });
   },
 
-<<<<<<< Updated upstream
-  logout: () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('urbaniq_token');
-      localStorage.removeItem('urbaniq_user');
-=======
   logout: async () => {
     try {
       await api.post('/auth/logout');
@@ -49,9 +44,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       console.error('Logout error:', err);
     } finally {
       set({ user: null, isAuthenticated: false, isLoading: false });
->>>>>>> Stashed changes
     }
-    set({ user: null, token: null, isAuthenticated: false });
   },
 
   initialize: async () => {

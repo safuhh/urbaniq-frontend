@@ -12,11 +12,7 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const router = useRouter()
-<<<<<<< Updated upstream
-  const { user, isAuthenticated, initialize, logout } = useAuthStore()
-=======
-  const { user, isAuthenticated, isLoading, logout } = useAuthStore()
->>>>>>> Stashed changes
+  const { user, isAuthenticated, isLoading, initialize, logout } = useAuthStore()
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {

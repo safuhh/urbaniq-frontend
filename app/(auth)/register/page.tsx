@@ -35,11 +35,6 @@ export default function RegisterPage() {
 
     try {
       const response = await api.post("/auth/register", { firstName, lastName, email, password, role })
-<<<<<<< Updated upstream
-      const { token, ...user } = response.data
-      setAuth(user, token)
-      router.push(`/dashboard/${user.role.toLowerCase()}`)
-=======
       const { _id, firstName: resFirstName, lastName: resLastName, email: userEmail, role: resRole } = response.data;
       const user = { _id, firstName: resFirstName, lastName: resLastName, email: userEmail, role: resRole };
       
@@ -52,7 +47,6 @@ export default function RegisterPage() {
       } else {
         router.push(`/dashboard/${user.role.toLowerCase()}`)
       }
->>>>>>> Stashed changes
     } catch (err: any) {
       setError(err.response?.data?.message || err.response?.data?.error || "Registration failed")
     } finally {

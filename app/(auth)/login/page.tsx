@@ -30,11 +30,6 @@ export default function LoginPage() {
 
     try {
       const response = await api.post("/auth/login", { email, password })
-<<<<<<< Updated upstream
-      const { token, ...user } = response.data
-      setAuth(user, token)
-      router.push(`/dashboard/${user.role.toLowerCase()}`)
-=======
       const { _id, firstName, lastName, email: userEmail, role } = response.data;
       const user = { _id, firstName, lastName, email: userEmail, role };
       
@@ -47,7 +42,6 @@ export default function LoginPage() {
       } else {
         router.push(`/dashboard/${user.role.toLowerCase()}`)
       }
->>>>>>> Stashed changes
     } catch (err: any) {
       setError(err.response?.data?.message || err.response?.data?.error || "Login failed")
     } finally {

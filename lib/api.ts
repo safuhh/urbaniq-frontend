@@ -19,8 +19,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-<<<<<<< Updated upstream
-=======
 // Add a response interceptor to handle token refresh
 api.interceptors.response.use(
   (response) => response,
@@ -50,6 +48,4 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
->>>>>>> Stashed changes
 export default api;
