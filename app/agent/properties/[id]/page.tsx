@@ -5,10 +5,10 @@ import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { MapPin, Bed, Bath, Square, CheckCircle2, Phone, Mail, User } from 'lucide-react';
-import { usePropertyStore } from '../../../../store/propertyStore';
-import { Badge } from '../../../../components/ui/badge';
-import { Card, CardContent } from '../../../../components/ui/card';
-import { Button } from '../../../../components/ui/button';
+import { usePropertyStore } from '@/store/propertyStore';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
 export default function PropertyDetailPage() {
@@ -65,7 +65,7 @@ export default function PropertyDetailPage() {
           </div>
           <div className="text-right">
             <p className="text-muted-foreground mb-1 uppercase tracking-wider text-sm font-semibold">Asking Price</p>
-            <p className="text-4xl font-bold text-primary">${property.price.toLocaleString()}</p>
+            <p className="text-4xl font-bold text-primary">${property.price?.toLocaleString()}</p>
           </div>
         </motion.div>
 
@@ -78,7 +78,7 @@ export default function PropertyDetailPage() {
         >
           <div className="relative h-[400px] md:h-[600px] w-full rounded-2xl overflow-hidden shadow-2xl">
             <Image
-              src={property.images?.[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80'}
+              src={property.images?.[0] ? (property.images[0].startsWith('http') ? property.images[0] : `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5001'}${property.images[0]}`) : 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80'}
               alt={property.title}
               fill
               className="object-cover"
@@ -130,12 +130,37 @@ export default function PropertyDetailPage() {
               </CardContent>
             </Card>
 
+            {/* Image Gallery */}
+            {property.images && property.images.length > 1 && (
+              <Card className="border-none shadow-md">
+                <CardContent className="p-8">
+                  <h3 className="text-2xl font-semibold mb-6">Property Gallery</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {property.images.slice(1).map((image: string, index: number) => {
+                      const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5001';
+                      const imgSrc = image.startsWith('http') ? image : `${baseUrl}${image}`;
+                      return (
+                        <div key={index} className="relative h-[250px] rounded-xl overflow-hidden shadow-sm group">
+                          <img 
+                            src={imgSrc} 
+                            alt={`Property view ${index + 2}`} 
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                            onClick={() => window.open(imgSrc, '_blank')}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {property.amenities && property.amenities.length > 0 && (
               <Card className="border-none shadow-md">
                 <CardContent className="p-8">
                   <h3 className="text-2xl font-semibold mb-6">Amenities</h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {property.amenities.map((amenity, index) => (
+                    {property.amenities.map((amenity: string, index: number) => (
                       <div key={index} className="flex items-center gap-2">
                         <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
                         <span className="text-muted-foreground">{amenity}</span>

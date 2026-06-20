@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -12,6 +12,7 @@ import { useAuthStore } from "@/store/authStore"
 export default function RegisterPage() {
   const router = useRouter()
   const setAuth = useAuthStore((state) => state.setAuth)
+  const { isAuthenticated, isLoading } = useAuthStore()
   
   const [role, setRole] = useState("Buyer")
   const [firstName, setFirstName] = useState("")
@@ -21,6 +22,12 @@ export default function RegisterPage() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.push('/')
+    }
+  }, [isLoading, isAuthenticated, router])
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
@@ -28,9 +35,24 @@ export default function RegisterPage() {
 
     try {
       const response = await api.post("/auth/register", { firstName, lastName, email, password, role })
+<<<<<<< Updated upstream
       const { token, ...user } = response.data
       setAuth(user, token)
       router.push(`/dashboard/${user.role.toLowerCase()}`)
+=======
+      const { _id, firstName: resFirstName, lastName: resLastName, email: userEmail, role: resRole } = response.data;
+      const user = { _id, firstName: resFirstName, lastName: resLastName, email: userEmail, role: resRole };
+      
+      setAuth(user);
+      
+      if (user.role === 'Buyer') {
+        router.push('/')
+      } else if (user.role === 'Agent') {
+        router.push('/agent')
+      } else {
+        router.push(`/dashboard/${user.role.toLowerCase()}`)
+      }
+>>>>>>> Stashed changes
     } catch (err: any) {
       setError(err.response?.data?.message || err.response?.data?.error || "Registration failed")
     } finally {

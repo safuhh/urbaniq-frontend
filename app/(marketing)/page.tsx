@@ -1,71 +1,170 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
-import { Search, MapPin, Building, ChevronRight, CheckCircle2, Shield, Gem } from "lucide-react"
+import { Search, MapPin, Building, ChevronRight, CheckCircle2, Shield, Gem, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { motion } from "framer-motion"
 
 export default function LandingPage() {
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="relative h-[80vh] min-h-[600px] flex items-center justify-center bg-black overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2075&q=80"
-            alt="Luxury modern home"
-            fill
-            className="object-cover opacity-60"
-            priority
-          />
+      {/* Hero Section & Custom Navbar */}
+      <div className="relative w-full h-[85vh] min-h-[680px] flex flex-col bg-[#0a0a0a] rounded-b-[40px] overflow-visible mb-32">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0 bg-[#0a0a0a] rounded-b-[40px] overflow-hidden">
+          <motion.div
+            initial={{ scale: 1.1, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute inset-0 w-full h-full"
+          >
+            <Image
+              src="/building.png"
+              alt="Luxury modern home"
+              fill
+              className="object-cover opacity-[0.85] transition-transform duration-1000 hover:scale-[1.02]"
+              priority
+            />
+          </motion.div>
+          {/* Advanced Luxury Gradient Overlay for perfect contrast */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/20 to-transparent h-[40%]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
         </div>
-        <div className="container relative z-10 mx-auto px-4 text-center mt-12">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight mb-6">
-            Elevating Urban <br className="hidden md:block" /> Real Estate Portfolio Management
-          </h1>
-          <p className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto mb-10">
-            Experience enterprise-grade property intelligence and marketplace connectivity in one seamless environment.
-          </p>
 
-          {/* Search Bar */}
-          <div className="bg-white p-3 rounded-xl max-w-4xl mx-auto shadow-2xl flex flex-col md:flex-row gap-3 items-end md:items-center">
-            <div className="w-full">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 block text-left ml-2">Location</label>
-              <div className="flex items-center gap-2 border-b md:border-b-0 md:border-r pb-2 md:pb-0 md:pr-4">
-                <MapPin className="h-4 w-4 text-primary ml-2" />
-                <Input type="text" placeholder="Dubai Marina, UAE" className="border-0 shadow-none focus-visible:ring-0 p-0 text-sm font-medium h-8" />
-              </div>
+        {/* Custom Premium Navbar */}
+        <motion.div 
+          initial={{ y: -40, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          className="relative z-50 pt-8 px-6 md:px-12 flex items-center justify-between"
+        >
+          <Link href="/" className="flex items-center space-x-2 text-white group">
+            <Building className="h-6 w-6 text-white/90 group-hover:text-white transition-colors" />
+            <span className="font-semibold text-[22px] tracking-tight">Urbaniq</span>
+          </Link>
+          
+          {/* Glassmorphic Pill Navigation */}
+          <nav className="hidden lg:flex items-center space-x-2 bg-white/10 backdrop-blur-lg rounded-full p-1.5 border border-white/10 text-white shadow-sm">
+            <Link href="/" className="bg-white text-black px-5 py-2 rounded-full text-[13px] font-medium shadow-sm transition-transform hover:scale-[1.02]">Home</Link>
+            <Link href="#" className="px-5 py-2 hover:text-white/80 text-white/90 text-[13px] font-medium transition-colors">About Us</Link>
+            <Link href="/properties" className="px-5 py-2 hover:text-white/80 text-white/90 text-[13px] font-medium transition-colors">Properties</Link>
+            <Link href="#" className="px-5 py-2 hover:text-white/80 text-white/90 text-[13px] font-medium transition-colors">Contact</Link>
+          </nav>
+
+          {/* Right Actions */}
+          <div className="flex items-center space-x-6 text-white font-medium">
+            <div className="hidden sm:flex items-center space-x-1.5 cursor-pointer text-white/80 hover:text-white transition-colors">
+              <Globe className="w-4 h-4" />
+              <span className="text-[13px]">Eng</span>
             </div>
-            <div className="w-full">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 block text-left ml-2">Price Range</label>
-              <div className="flex items-center gap-2 border-b md:border-b-0 md:border-r pb-2 md:pb-0 md:pr-4">
-                <span className="text-primary font-bold ml-2 text-sm">$</span>
-                <select className="w-full bg-transparent border-0 focus:ring-0 p-0 text-sm font-medium text-foreground outline-none h-8">
-                  <option>1M - 5M</option>
-                  <option>5M - 10M</option>
-                  <option>10M+</option>
-                </select>
-              </div>
+            <div className="flex items-center space-x-5">
+              <Link href="/login" className="text-[13px] text-white/90 hover:text-white transition-colors">Log in</Link>
+              <Button 
+                asChild
+                className="bg-[#B8E66B] hover:bg-[#a5d15c] text-black rounded-full px-6 h-10 text-[13px] font-semibold shadow-sm transition-all"
+              >
+                <Link href="/register">Sign Up</Link>
+              </Button>
             </div>
-            <div className="w-full">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 block text-left ml-2">Property Type</label>
-              <div className="flex items-center gap-2 border-b md:border-b-0 md:border-r pb-2 md:pb-0 md:pr-4">
-                <Building className="h-4 w-4 text-primary ml-2" />
-                <select className="w-full bg-transparent border-0 focus:ring-0 p-0 text-sm font-medium text-foreground outline-none h-8">
-                  <option>Penthouse</option>
-                  <option>Villa</option>
-                  <option>Apartment</option>
-                  <option>Commercial</option>
-                </select>
-              </div>
-            </div>
-            <Button size="default" className="w-full md:w-auto shrink-0 h-12 px-8 rounded-lg text-sm bg-primary hover:bg-primary/90 text-white">
-              <Search className="mr-2 h-4 w-4" /> Search
-            </Button>
+          </div>
+        </motion.div>
+
+        {/* Hero Content */}
+        <div className="relative z-40 flex-1 flex flex-col justify-end pb-[10rem] md:pb-[9.5rem] px-6 md:px-16 container mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-10">
+            <motion.h1 
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-5xl md:text-[72px] font-medium text-white max-w-3xl leading-[1.05] tracking-[-0.02em]"
+            >
+              Discover Exceptional <br /> Premium Properties.
+            </motion.h1>
+            <motion.p 
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="text-white/70 max-w-[300px] text-[14px] leading-relaxed hidden md:block border-l border-white/20 pl-5 pb-1"
+            >
+              Explore our curated collection of luxury residences and exclusive portfolios designed to elevate your lifestyle.
+            </motion.p>
           </div>
         </div>
-      </section>
+
+        {/* Structured Search Card */}
+        <motion.div 
+          initial={{ y: 60, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute left-0 right-0 -bottom-16 container mx-auto px-4 md:px-16 z-50"
+        >
+          <div className="bg-white rounded-[24px] p-2 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] border border-gray-100/80 backdrop-blur-3xl">
+            {/* Componentized Filter Tabs */}
+            <div className="flex items-center gap-2 px-6 pt-5 pb-4 border-b border-gray-100">
+              <button className="px-5 py-2 rounded-full text-[13px] font-medium bg-[#B8E66B] text-black shadow-sm transition-all">All Properties</button>
+              <button className="px-5 py-2 rounded-full text-[13px] font-medium text-gray-500 hover:text-black hover:bg-gray-50 transition-colors">Houses</button>
+              <button className="px-5 py-2 rounded-full text-[13px] font-medium text-gray-500 hover:text-black hover:bg-gray-50 transition-colors">Apartments</button>
+              <button className="px-5 py-2 rounded-full text-[13px] font-medium text-gray-500 hover:text-black hover:bg-gray-50 transition-colors">Villas</button>
+            </div>
+            
+            {/* Unified Input Grid */}
+            <div className="flex flex-col lg:flex-row items-center gap-4 p-4 lg:p-5">
+              <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-4 md:gap-0 bg-[#f9f9f9] rounded-[18px] p-2">
+                {/* Location Input */}
+                <div className="flex flex-col px-5 py-2.5 md:border-r border-gray-200/60 relative group cursor-text">
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 group-hover:text-black transition-colors">Location</label>
+                  <div className="flex items-center gap-2.5">
+                    <MapPin className="w-4 h-4 text-gray-400" />
+                    <input type="text" placeholder="City, region, or address" className="bg-transparent text-[14px] font-medium text-gray-900 w-full outline-none placeholder:text-gray-400 placeholder:font-normal" />
+                  </div>
+                </div>
+                
+                {/* Property Type Input */}
+                <div className="flex flex-col px-5 py-2.5 md:border-r border-gray-200/60 relative group cursor-pointer">
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 group-hover:text-black transition-colors">Property Type</label>
+                  <div className="flex items-center gap-2.5">
+                    <Building className="w-4 h-4 text-gray-400" />
+                    <select className="bg-transparent text-[14px] font-medium text-gray-900 w-full outline-none appearance-none cursor-pointer">
+                      <option>Any Type</option>
+                      <option>Residential</option>
+                      <option>Commercial</option>
+                      <option>Land</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Price Range Input */}
+                <div className="flex flex-col px-5 py-2.5 relative group cursor-pointer">
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 group-hover:text-black transition-colors">Price Range</label>
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-gray-400 font-medium text-[14px]">$</span>
+                    <select className="bg-transparent text-[14px] font-medium text-gray-900 w-full outline-none appearance-none cursor-pointer">
+                      <option>Any Price</option>
+                      <option>$100k - $500k</option>
+                      <option>$500k - $1M</option>
+                      <option>$1M+</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Secondary CTA Button */}
+              <Link href="/properties" className="w-full lg:w-auto shrink-0">
+                <Button 
+                  className="bg-[#B8E66B] hover:bg-[#a5d15c] text-black rounded-[16px] px-8 h-[64px] text-[14px] font-bold w-full shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-[1.02]"
+                >
+                  <Search className="w-4 h-4" /> 
+                  <span>Search Properties</span>
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </motion.div>
+      </div>
 
       {/* Stats Section */}
       <section className="py-12 bg-background border-b">
@@ -340,9 +439,11 @@ export default function LandingPage() {
               <span className="text-[10px] font-bold text-primary uppercase tracking-wider">Curated Aesthetics</span>
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight mt-2">The Urbaniq Lifestyle</h2>
             </div>
-            <Button variant="link" className="text-primary hidden md:flex items-center">
-              View Lookbook <ChevronRight className="ml-1 h-4 w-4" />
-            </Button>
+            <Link href="/properties">
+              <Button variant="link" className="text-primary hidden md:flex items-center">
+                View Lookbook <ChevronRight className="ml-1 h-4 w-4" />
+              </Button>
+            </Link>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:h-[500px]">

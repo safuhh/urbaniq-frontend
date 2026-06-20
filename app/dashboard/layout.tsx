@@ -12,7 +12,11 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const router = useRouter()
+<<<<<<< Updated upstream
   const { user, isAuthenticated, initialize, logout } = useAuthStore()
+=======
+  const { user, isAuthenticated, isLoading, logout } = useAuthStore()
+>>>>>>> Stashed changes
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
@@ -21,13 +25,17 @@ export default function DashboardLayout({
   }, [initialize])
 
   useEffect(() => {
-    if (isClient && !isAuthenticated) {
+    if (isClient && !isLoading && !isAuthenticated) {
       router.push("/login")
     }
-  }, [isClient, isAuthenticated, router])
+  }, [isClient, isLoading, isAuthenticated, router])
 
-  if (!isClient || !isAuthenticated) {
-    return null // or a loading spinner
+  if (!isClient || isLoading || !isAuthenticated) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    )
   }
 
   const handleLogout = () => {

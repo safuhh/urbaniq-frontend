@@ -1,8 +1,28 @@
 import Link from "next/link"
 import { Building2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+<<<<<<< Updated upstream
 
 export function Navbar() {
+=======
+import { useAuthStore } from "@/store/authStore"
+import { useRouter, usePathname } from "next/navigation"
+
+export function Navbar() {
+  const { user, logout } = useAuthStore()
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const handleLogout = () => {
+    logout()
+    router.push('/')
+  }
+
+  if (pathname === '/') {
+    return null;
+  }
+
+>>>>>>> Stashed changes
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4 sm:px-8 mx-auto">

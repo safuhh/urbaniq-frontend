@@ -10,51 +10,57 @@ export interface User {
   role: UserRole;
   profileImage?: string;
   phone?: string;
+  whatsapp?: string;
+  bio?: string;
+  location?: {
+    city?: string;
+    area?: string;
+  };
 }
 
 interface AuthState {
   user: User | null;
-  token: string | null;
   isAuthenticated: boolean;
-  setAuth: (user: User, token: string) => void;
+  isLoading: boolean;
+  setAuth: (user: User) => void;
   logout: () => void;
-  initialize: () => void;
+  initialize: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
-  token: null,
   isAuthenticated: false,
+  isLoading: true, // Start in loading state while checking session
 
-  setAuth: (user, token) => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('urbaniq_token', token);
-      localStorage.setItem('urbaniq_user', JSON.stringify(user));
-    }
-    set({ user, token, isAuthenticated: true });
+  setAuth: (user) => {
+    set({ user, isAuthenticated: true, isLoading: false });
   },
 
+<<<<<<< Updated upstream
   logout: () => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('urbaniq_token');
       localStorage.removeItem('urbaniq_user');
+=======
+  logout: async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      set({ user: null, isAuthenticated: false, isLoading: false });
+>>>>>>> Stashed changes
     }
     set({ user: null, token: null, isAuthenticated: false });
   },
 
-  initialize: () => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('urbaniq_token');
-      const userStr = localStorage.getItem('urbaniq_user');
-      if (token && userStr) {
-        try {
-          const user = JSON.parse(userStr);
-          set({ user, token, isAuthenticated: true });
-        } catch (e) {
-          localStorage.removeItem('urbaniq_token');
-          localStorage.removeItem('urbaniq_user');
-        }
-      }
+  initialize: async () => {
+    set({ isLoading: true });
+    try {
+      const response = await api.get('/auth/me');
+      set({ user: response.data, isAuthenticated: true, isLoading: false });
+    } catch (error) {
+      set({ user: null, isAuthenticated: false, isLoading: false });
     }
   }
 }));

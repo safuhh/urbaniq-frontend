@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -11,10 +11,17 @@ import { useAuthStore } from "@/store/authStore"
 export default function LoginPage() {
   const router = useRouter()
   const setAuth = useAuthStore((state) => state.setAuth)
+  const { isAuthenticated, isLoading } = useAuthStore()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.push('/agent') // Or dashboard based on role, but we don't have role here easily unless we get user. Let's just push to /
+    }
+  }, [isLoading, isAuthenticated, router])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,9 +30,24 @@ export default function LoginPage() {
 
     try {
       const response = await api.post("/auth/login", { email, password })
+<<<<<<< Updated upstream
       const { token, ...user } = response.data
       setAuth(user, token)
       router.push(`/dashboard/${user.role.toLowerCase()}`)
+=======
+      const { _id, firstName, lastName, email: userEmail, role } = response.data;
+      const user = { _id, firstName, lastName, email: userEmail, role };
+      
+      setAuth(user);
+      
+      if (user.role === 'Buyer') {
+        router.push('/')
+      } else if (user.role === 'Agent') {
+        router.push('/agent')
+      } else {
+        router.push(`/dashboard/${user.role.toLowerCase()}`)
+      }
+>>>>>>> Stashed changes
     } catch (err: any) {
       setError(err.response?.data?.message || err.response?.data?.error || "Login failed")
     } finally {
