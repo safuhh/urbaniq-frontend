@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { PropertyCard } from '../../../../components/property/PropertyCard';
-import { PropertyFilters } from '../../../../components/property/PropertyFilters';
-import { usePropertyStore } from '../../../../store/propertyStore';
-import { IPropertyFilter } from '../../../../types/property';
+import { PropertyCard } from '@/components/property/PropertyCard';
+import { PropertyFilters } from '@/components/property/PropertyFilters';
+import { usePropertyStore } from '@/store/propertyStore';
+import { IPropertyFilter } from '@/types/property';
 import { Loader2 } from 'lucide-react';
 
 export default function PropertiesPage() {

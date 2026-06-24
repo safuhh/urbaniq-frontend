@@ -5,10 +5,10 @@ import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { MapPin, Bed, Bath, Square, CheckCircle2, Phone, Mail, User } from 'lucide-react';
-import { usePropertyStore } from '../../../../store/propertyStore';
-import { Badge } from '../../../../components/ui/badge';
-import { Card, CardContent } from '../../../../components/ui/card';
-import { Button } from '../../../../components/ui/button';
+import { usePropertyStore } from '@/store/propertyStore';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
 export default function PropertyDetailPage() {
