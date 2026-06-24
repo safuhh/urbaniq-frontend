@@ -1,26 +1,36 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Image from "next/image"
 import Link from "next/link"
-import { Search, MapPin, SlidersHorizontal, ChevronDown } from "lucide-react"
+import Image from "next/image"
+import { Search, MapPin, BedDouble, Bath, Square, SlidersHorizontal } from "lucide-react"
+import api from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import api from "@/lib/api"
 
-export default function PropertiesPage() {
-  const [properties, setProperties] = useState<any[]>([])
+interface Property {
+  _id: string;
+  title: string;
+  price: number;
+  location: { city: string; state: string; address: string };
+  features: { bedrooms: number; bathrooms: number; area: number };
+  propertyType: string;
+  images: string[];
+}
+
+export default function PropertiesListingPage() {
+  const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState("")
 
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await api.get('/properties')
-        setProperties(response.data)
-      } catch (error) {
-        console.error("Failed to fetch properties:", error)
+        const res = await api.get("/properties")
+        setProperties(res.data?.data || [])
+      } catch (err) {
+        console.error("Failed to fetch properties:", err)
       } finally {
         setLoading(false)
       }
@@ -28,117 +38,112 @@ export default function PropertiesPage() {
     fetchProperties()
   }, [])
 
+  const filteredProperties = properties.filter(p => 
+    p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    p.location.city.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
   return (
-    <div className="bg-muted/20 min-h-screen pb-24">
+    <div className="bg-background min-h-screen">
       {/* Search Header */}
-      <div className="bg-white border-b sticky top-16 z-40">
-        <div className="container mx-auto px-4 max-w-screen-2xl py-4 flex gap-4">
-          <div className="relative flex-1">
-             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-             <Input placeholder="Search by location, building, or keyword..." className="pl-9 bg-muted/30 border-none h-10" />
+      <div className="bg-primary text-primary-foreground py-16">
+        <div className="container mx-auto px-4 max-w-screen-xl">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">Find Your Next Investment</h1>
+          <p className="text-lg opacity-90 mb-8 max-w-2xl">Browse our curated selection of verified premium properties across top global markets.</p>
+          
+          <div className="bg-background rounded-xl p-2 flex flex-col md:flex-row gap-2 max-w-4xl shadow-xl">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
+              <Input 
+                placeholder="Search by city, neighborhood, or title..." 
+                className="pl-10 h-12 border-0 focus-visible:ring-0 text-foreground"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="hidden md:block w-[1px] bg-border my-2"></div>
+            <div className="flex gap-2">
+              <Button variant="outline" className="h-12 text-foreground border-0 hover:bg-muted shrink-0 px-4">
+                <SlidersHorizontal className="h-4 w-4 mr-2" /> Filters
+              </Button>
+              <Button className="h-12 px-8 font-semibold shrink-0">Search</Button>
+            </div>
           </div>
-          <Button variant="outline" className="hidden sm:flex items-center gap-2">
-            <SlidersHorizontal className="h-4 w-4" /> Filters
-          </Button>
-          <Button variant="outline" className="hidden sm:flex items-center gap-2">
-            Sort by: Featured <ChevronDown className="h-4 w-4" />
-          </Button>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 max-w-screen-2xl pt-8">
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Sidebar Filters (Desktop) */}
-          <aside className="hidden md:block w-64 shrink-0 space-y-8">
-            <div>
-              <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider">Property Type</h3>
-              <div className="space-y-3">
-                {['All', 'House/Villa', 'Apartment', 'Penthouse', 'Commercial'].map((type, i) => (
-                  <label key={i} className="flex items-center gap-3 cursor-pointer group">
-                    <input type="checkbox" className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4" defaultChecked={i===0} />
-                    <span className="text-sm text-muted-foreground group-hover:text-foreground">{type}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-            
-            <div className="border-t pt-8">
-              <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider">Price Range</h3>
-              <div className="flex items-center gap-2">
-                 <Input placeholder="Min" className="h-9" />
-                 <span className="text-muted-foreground">-</span>
-                 <Input placeholder="Max" className="h-9" />
-              </div>
-            </div>
-
-            <div className="border-t pt-8">
-              <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider">Bedrooms</h3>
-              <div className="flex flex-wrap gap-2">
-                {['Any', '1', '2', '3', '4', '5+'].map((num, i) => (
-                  <button key={i} className={`h-8 px-3 rounded-full border text-sm font-medium ${i===0 ? 'bg-primary text-white border-primary' : 'bg-white hover:bg-muted'}`}>
-                    {num}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </aside>
-
-          {/* Property Grid */}
-          <main className="flex-1">
-            <div className="mb-6 flex justify-between items-end">
-              <h1 className="text-2xl font-bold tracking-tight">Properties for Sale</h1>
-              <span className="text-sm text-muted-foreground">{properties.length} results</span>
-            </div>
-
-            {loading ? (
-              <div className="text-center py-20 text-muted-foreground">Loading properties...</div>
-            ) : properties.length === 0 ? (
-              <div className="text-center py-20 text-muted-foreground">No properties found.</div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {properties.map((property) => (
-                  <Link href={`/properties/${property._id}`} key={property._id}>
-                    <Card className="overflow-hidden border-0 shadow-sm group cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1">
-                      <div className="relative h-56 overflow-hidden">
-                        <Image
-                          src={property.images?.[0] || "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1153&q=80"}
-                          alt={property.title}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                        <Badge className={`absolute top-4 left-4 border-none text-white bg-primary/90`}>
-                          {property.status}
-                        </Badge>
-                      </div>
-                      <CardContent className="p-5">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-bold text-lg leading-tight truncate pr-4">{property.title}</h3>
-                        </div>
-                        <p className="text-muted-foreground text-sm flex items-center gap-1 mb-4">
-                          <MapPin className="h-3.5 w-3.5" /> {property.location?.city}, {property.location?.state}
-                        </p>
-                        
-                        <div className="text-xl font-bold text-primary mb-4">${property.price?.toLocaleString()}</div>
-                        
-                        <div className="flex justify-between text-xs text-muted-foreground border-t pt-4">
-                          <span><strong>{property.features?.bedrooms || 0}</strong> Beds</span>
-                          <span><strong>{property.features?.bathrooms || 0}</strong> Baths</span>
-                          <span><strong>{property.features?.area || 0}</strong> sqft</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            )}
-            
-            {!loading && properties.length > 0 && (
-              <div className="mt-12 text-center">
-                <Button variant="outline" size="lg">Load More Results</Button>
-              </div>
-            )}
-          </main>
+      {/* Property Grid */}
+      <div className="container mx-auto px-4 py-12 max-w-screen-xl">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl font-bold">
+             {loading ? "Loading properties..." : `${filteredProperties.length} Properties Found`}
+          </h2>
+          <select className="border rounded-md px-3 py-2 text-sm bg-background">
+            <option>Sort by: Newest</option>
+            <option>Price: Low to High</option>
+            <option>Price: High to Low</option>
+          </select>
         </div>
+
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <div key={i} className="animate-pulse bg-muted h-[400px] rounded-xl"></div>
+            ))}
+          </div>
+        ) : filteredProperties.length === 0 ? (
+          <div className="text-center py-20 bg-muted/20 rounded-xl border-2 border-dashed">
+             <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+             <h3 className="text-xl font-semibold mb-2">No properties match your search</h3>
+             <p className="text-muted-foreground">Try adjusting your filters or search term.</p>
+             <Button variant="link" onClick={() => setSearchTerm("")} className="mt-4">Clear all filters</Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredProperties.map(property => (
+              <Link href={`/properties/${property._id}`} key={property._id} className="group block">
+                <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 border-border group-hover:-translate-y-1">
+                  <div className="relative h-[240px] w-full bg-muted">
+                    <Image 
+                      src={property.images?.[0] || "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"}
+                      alt={property.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-sm px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-md">
+                      {property.propertyType}
+                    </div>
+                  </div>
+                  <CardContent className="p-5">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors truncate pr-4">
+                        {property.title}
+                      </h3>
+                      <p className="font-bold text-primary shrink-0">${property.price.toLocaleString()}</p>
+                    </div>
+                    
+                    <div className="flex items-center text-sm text-muted-foreground mb-4">
+                      <MapPin className="h-3.5 w-3.5 mr-1 shrink-0" />
+                      <span className="truncate">{property.location.city}, {property.location.state}</span>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-4 border-t text-sm font-medium text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <BedDouble className="h-4 w-4" /> <span>{property.features.bedrooms}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Bath className="h-4 w-4" /> <span>{property.features.bathrooms}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Square className="h-4 w-4" /> <span>{property.features.area} sqft</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

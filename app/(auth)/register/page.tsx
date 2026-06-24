@@ -30,7 +30,12 @@ export default function RegisterPage() {
       const response = await api.post("/auth/register", { firstName, lastName, email, password, role })
       const { token, ...user } = response.data
       setAuth(user, token)
-      router.push(`/dashboard/${user.role.toLowerCase()}`)
+      
+      if (user.role === 'Buyer') {
+        router.push('/')
+      } else {
+        router.push(`/dashboard/${user.role.toLowerCase()}`)
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || err.response?.data?.error || "Registration failed")
     } finally {

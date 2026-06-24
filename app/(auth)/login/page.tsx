@@ -25,7 +25,12 @@ export default function LoginPage() {
       const response = await api.post("/auth/login", { email, password })
       const { token, ...user } = response.data
       setAuth(user, token)
-      router.push(`/dashboard/${user.role.toLowerCase()}`)
+      
+      if (user.role === 'Buyer') {
+        router.push('/dashboard/buyer')
+      } else {
+        router.push(`/dashboard/${user.role.toLowerCase()}`)
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || err.response?.data?.error || "Login failed")
     } finally {

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import api from '../lib/api';
 
 export type UserRole = 'Admin' | 'Owner' | 'Agent' | 'Buyer';
 
@@ -34,12 +35,18 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ user, token, isAuthenticated: true });
   },
 
-  logout: () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('urbaniq_token');
-      localStorage.removeItem('urbaniq_user');
+  logout: async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('urbaniq_token');
+        localStorage.removeItem('urbaniq_user');
+      }
+      set({ user: null, token: null, isAuthenticated: false });
     }
-    set({ user: null, token: null, isAuthenticated: false });
   },
 
   initialize: () => {
@@ -58,3 +65,5 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   }
 }));
+
+export default useAuthStore;
