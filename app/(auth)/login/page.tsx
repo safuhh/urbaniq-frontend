@@ -27,8 +27,8 @@ export default function LoginPage() {
 
     try {
       const response = await api.post("/auth/login", { email, password })
-      const { token, refreshToken, ...user } = response.data
-      setAuth(user, token, refreshToken)
+      const { accessToken, refreshToken, ...user } = response.data
+      setAuth(user, accessToken, refreshToken)
       
       if (user.role === 'Buyer') {
         router.push('/dashboard/buyer')

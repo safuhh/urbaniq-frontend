@@ -91,8 +91,8 @@ function VerifyEmailForm() {
     setLoading(true)
     try {
       const response = await api.post("/auth/verify-otp", { email, otp: otpCode })
-      const { token, refreshToken, ...verifiedUser } = response.data
-      setAuth(verifiedUser, token, refreshToken)
+      const { accessToken, refreshToken, ...verifiedUser } = response.data
+      setAuth(verifiedUser, accessToken, refreshToken)
       setSuccess("Email verified successfully! Redirecting...")
       
       setTimeout(() => {
