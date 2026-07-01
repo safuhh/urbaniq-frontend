@@ -19,6 +19,7 @@ interface AuthState {
   token: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
+  hydrated: boolean; // true after localStorage has been read
   setAuth: (user: User, token: string, refreshToken: string) => void;
   setIsVerified: (isVerified: boolean) => void;
   logout: () => Promise<void>;
@@ -30,6 +31,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   token: null,
   refreshToken: null,
   isAuthenticated: false,
+  hydrated: false,
 
   setAuth: (user, token, refreshToken) => {
     if (typeof window !== 'undefined') {
@@ -79,7 +81,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (token && userStr) {
         try {
           const user = JSON.parse(userStr);
-          set({ user, token, refreshToken, isAuthenticated: true });
+          set({ user, token, refreshToken, isAuthenticated: true, hydrated: true });
+          return;
         } catch (e) {
           localStorage.removeItem('urbaniq_token');
           localStorage.removeItem('urbaniq_refresh_token');
@@ -87,6 +90,8 @@ export const useAuthStore = create<AuthState>((set) => ({
         }
       }
     }
+    // Always mark hydrated even if no session found
+    set({ hydrated: true });
   }
 }));
 
